@@ -17,7 +17,6 @@ class ModelTests(TestCase):
             last_name="last_name",
             first_name="last_name"
         )
-        self.today = date(2024, 1, 9)
         self.task_type = TaskType.objects.create(name="Bug")
         self.task_description = "Task_description"
         self.task_1 = Task.objects.create(

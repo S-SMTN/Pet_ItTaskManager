@@ -49,3 +49,4 @@ class TaskAdmin(admin.ModelAdmin):
 
 admin.site.register(Position)
 admin.site.register(TaskType)
+

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Positions</title>{% endblock %}
+
+{% block content %}
+  <h1>
+    Position List
+    <a href="" class="btn btn-primary link-to-page">
+      Create
+    </a>
+  </h1>
+
+  {% if position_list %}
+      <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>QTY</th>
+          <th>Update</th>
+          <th>Delete</th>
+        </tr>
+
+        {% for  position in position_list%}
+        <tr>
+          <td>
+              {{ position.id }}
+          </td>
+          <td>
+              {{ position.name }}
+          </td>
+          <td>
+              {{ position.workers.all|length }}
+          </td>
+          <td>
+              <a href="">
+                Update
+              </a>
+            </td>
+            <td>
+              <a style="color: red"
+                href="">
+                Delete
+              </a>
+            </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+  {% else %}
+    <p>There are no positions in this app</p>
+  {% endif %}
+
+{% endblock %}

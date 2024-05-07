@@ -16,6 +16,7 @@ class Worker(AbstractUser):
     position = models.ForeignKey(
         to=Position,
         on_delete=models.PROTECT,
+        related_name="workers",
         null=True
     )
 

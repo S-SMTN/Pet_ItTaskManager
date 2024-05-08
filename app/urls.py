@@ -1,6 +1,7 @@
 from django.urls import path
 
-from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView
+from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView, \
+    WorkerListView
 
 urlpatterns = [
     path("", index, name="index"),
@@ -19,6 +20,11 @@ urlpatterns = [
         "position/<int:pk>/delete/",
         PositionDeleteView.as_view(),
         name="position-delete",
+    ),
+    path(
+        "workers/",
+        WorkerListView.as_view(),
+        name="worker-list",
     ),
 ]
 

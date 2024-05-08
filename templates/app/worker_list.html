@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load filter_by_category %}
+
+{% block title %}<title>Workers</title>{% endblock %}
+
+{% block content %}
+  <h1>
+    Workers List
+    <a href="" class="btn btn-primary link-to-page">
+      Create
+    </a>
+  </h1>
+
+  <form action="" method="get">
+    {{ search_form }}
+    <input type="submit" value="🔎">
+  </form>
+
+  {% if worker_list %}
+    <table class="table">
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Position</th>
+        <th>Active tasks</th>
+        <th>Completed tasks</th>
+      </tr>
+    {% for worker in worker_list %}
+      <tr>
+        <td>{{ worker.id }}</td>
+        <td><a href="">{{ worker.username }} {% if user == worker %} (Me){% endif %}</a></td>
+        <td>{{ worker.first_name }}</td>
+        <td>{{ worker.last_name }}</td>
+        <td>{{ worker.position }}</td>
+        <td>{{ worker.tasks.all|filter_task_by_is_completed:False|length }}</td>
+        <td>{{ worker.tasks.all|filter_task_by_is_completed:True|length }}</td>
+      </tr>
+    {% endfor %}
+
+  {% else %}
+    <p>There are no workers in this app</p>
+  {% endif %}
+
+{% endblock %}

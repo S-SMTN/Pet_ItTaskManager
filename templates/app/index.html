@@ -7,7 +7,7 @@
     <p>The Task Manager has the following record counts:</p>
     <ul>
         <li><strong>Positions: </strong><a href="{% url 'app:position-list' %}">{{ num_positions }}</a></li>
-        <li><strong>Workers: </strong>{{ num_workers }}</li>
+        <li><strong>Workers: </strong><a href="{% url 'app:worker-list' %}">{{ num_workers }}</a></li>
         <li><strong>Task types: </strong>{{ num_task_types }}</li>
         <li><strong>Tasks: </strong>{{ num_tasks }}</li>
     </ul>

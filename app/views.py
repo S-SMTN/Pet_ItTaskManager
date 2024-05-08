@@ -5,7 +5,7 @@ from django.views import generic
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from app.forms import PositionSearchForm
+from app.forms import PositionSearchForm, WorkerSearchForm
 from app.models import Position, Worker, TaskType, Task
 
 
@@ -70,3 +70,23 @@ class PositionDeleteView(LoginRequiredMixin, generic.DeleteView):
             deletion_restricted = True
             context["deletion_restricted"] = deletion_restricted
         return context
+
+
+class WorkerListView(LoginRequiredMixin, generic.ListView):
+    model = Worker
+    paginate_by = 10
+
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict:
+        context = super(WorkerListView, self).get_context_data(**kwargs)
+        username = self.request.GET.get("username")
+        context["search_form"] = WorkerSearchForm(
+            initial={"username": username}
+        )
+        return context
+
+    def get_queryset(self) -> QuerySet:
+        queryset = Worker.objects.all().prefetch_related("tasks").select_related("position")
+        username = self.request.GET.get("username")
+        if username:
+            return queryset.filter(username__icontains=username)
+        return queryset

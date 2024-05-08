@@ -1,13 +1,11 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.views import generic
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
 
-from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm, WorkerChangeForm, TaskForm
+from app.forms import PositionSearchForm, WorkerSearchForm
 from app.models import Position, Worker, TaskType, Task
 
 
@@ -47,11 +45,6 @@ class PositionListView(LoginRequiredMixin, generic.ListView):
         if name:
             return queryset.filter(name__icontains=name)
         return queryset
-
-
-class PositionDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Position
-    queryset = Position.objects.all().prefetch_related("workers")
 
 
 class PositionCreateView(LoginRequiredMixin, generic.CreateView):
@@ -97,179 +90,3 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         if username:
             return queryset.filter(username__icontains=username)
         return queryset
-
-
-class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Worker
-    queryset = Worker.objects.all().prefetch_related("tasks").select_related("position")
-
-    def get_context_data(self, **kwargs) -> dict:
-        context = super(WorkerDetailView, self).get_context_data(**kwargs)
-        tasks = Task.objects.filter(
-            assignees=self.get_object()
-        ).prefetch_related("assignees", "task_type")
-        paginator = Paginator(tasks, 10)
-        page_number = self.request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        context["tasks"] = tasks
-        context["paginator"] = paginator
-        context["page_obj"] = page_obj
-        context["is_paginated"] = True
-        return context
-
-
-@login_required
-def unassign_task_from_worker_page(
-    request: HttpRequest,
-    worker_id: int,
-    task_id: int
-) -> HttpResponse:
-    worker = Worker.objects.get(id=worker_id)
-    task = Task.objects.get(id=task_id)
-    worker.tasks.remove(task)
-    return HttpResponseRedirect(reverse_lazy("app:worker-detail", args=[worker_id]))
-
-
-class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
-    model = Worker
-    form_class = WorkerCreationForm
-
-
-class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
-    model = Worker
-    form_class = WorkerChangeForm
-
-
-class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
-    model = Worker
-    success_url = reverse_lazy("app:worker-list")
-
-    def get_context_data(self, **kwargs) -> dict:
-        context = super(WorkerDeleteView, self).get_context_data(**kwargs)
-        worker = self.get_object()
-        if worker.tasks.count() > 0:
-            deletion_restricted = True
-            context["deletion_restricted"] = deletion_restricted
-        return context
-
-
-class TaskTypeListView(LoginRequiredMixin, generic.ListView):
-    model = TaskType
-    paginate_by = 10
-
-    def get_context_data(self, *, object_list=None, **kwargs) -> dict:
-        context = super(TaskTypeListView, self).get_context_data(**kwargs)
-        name = self.request.GET.get("name")
-        context["search_form"] = PositionSearchForm(
-            initial={"name": name}
-        )
-        return context
-
-    def get_queryset(self) -> QuerySet:
-        queryset = TaskType.objects.all().prefetch_related("task_set")
-        name = self.request.GET.get("name")
-        if name:
-            return queryset.filter(name__icontains=name)
-        return queryset
-
-
-class TaskTypeDetailView(LoginRequiredMixin, generic.DetailView):
-    model = TaskType
-    queryset = TaskType.objects.all().prefetch_related("task_set__assignees")
-
-
-class TaskTypeCreateView(LoginRequiredMixin, generic.CreateView):
-    model = TaskType
-    fields = "__all__"
-    success_url = reverse_lazy("app:task-type-list")
-
-
-class TaskTypeUpdateView(LoginRequiredMixin, generic.UpdateView):
-    model = TaskType
-    fields = "__all__"
-    success_url = reverse_lazy("app:task-type-list")
-
-
-class TaskTypeDeleteView(LoginRequiredMixin, generic.DeleteView):
-    model = TaskType
-    success_url = reverse_lazy("app:task-type-list")
-
-    def get_context_data(self, **kwargs) -> dict:
-        context = super(TaskTypeDeleteView, self).get_context_data(**kwargs)
-        task_type = self.get_object()
-        if task_type.task_set.count() > 0:
-            deletion_restricted = True
-            context["deletion_restricted"] = deletion_restricted
-        return context
-
-
-class TaskListView(LoginRequiredMixin, generic.ListView):
-    model = Task
-    paginate_by = 10
-
-    def get_context_data(self, *, object_list=None, **kwargs) -> dict:
-        context = super(TaskListView, self).get_context_data(**kwargs)
-        name = self.request.GET.get("name")
-        context["search_form"] = PositionSearchForm(
-            initial={"name": name}
-        )
-        return context
-
-    def get_queryset(self) -> QuerySet:
-        queryset = Task.objects.all().prefetch_related("assignees", "task_type")
-        name = self.request.GET.get("name")
-        if name:
-            return queryset.filter(username__icontains=name)
-        return queryset
-
-
-class TaskDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Task
-    queryset = Task.objects.all().prefetch_related("assignees", "task_type")
-
-
-class TaskCreateView(LoginRequiredMixin, generic.CreateView):
-    model = Task
-    form_class = TaskForm
-    success_url = reverse_lazy("app:task-list")
-
-
-class TaskUpdateView(LoginRequiredMixin, generic.UpdateView):
-    model = Task
-    form_class = TaskForm
-    success_url = reverse_lazy("app:task-list")
-
-
-class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
-    model = Task
-    success_url = reverse_lazy("app:task-list")
-
-    def get_context_data(self, **kwargs) -> dict:
-        context = super(TaskDeleteView, self).get_context_data(**kwargs)
-        task = self.get_object()
-        if task.assignees.count() > 0:
-            deletion_restricted = True
-            context["deletion_restricted"] = deletion_restricted
-        return context
-
-
-@login_required
-def task_list_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
-    task = Task.objects.get(id=pk)
-    if task.is_completed:
-        task.is_completed = False
-    else:
-        task.is_completed = True
-    task.save()
-    return HttpResponseRedirect(reverse_lazy("app:task-list"))
-
-
-@login_required
-def task_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
-    task = Task.objects.get(id=pk)
-    if not task.is_completed:
-        task.is_completed = True
-    else:
-        task.is_completed = False
-    task.save()
-    return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))

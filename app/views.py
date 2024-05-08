@@ -62,3 +62,11 @@ class PositionUpdateView(LoginRequiredMixin, generic.UpdateView):
 class PositionDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Position
     success_url = reverse_lazy("app:position-list")
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super(PositionDeleteView, self).get_context_data(**kwargs)
+        position = self.get_object()
+        if position.workers.count() > 0:
+            deletion_restricted = True
+            context["deletion_restricted"] = deletion_restricted
+        return context

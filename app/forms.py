@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from app.models import Worker
 
@@ -31,6 +31,18 @@ class WorkerSearchForm(forms.Form):
 
 
 class WorkerCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Worker
+        fields = UserCreationForm.Meta.fields + (
+            "position",
+            "first_name",
+            "last_name",
+        )
+
+
+class WorkerChangeForm(UserChangeForm):
+    password = None
+
     class Meta(UserCreationForm.Meta):
         model = Worker
         fields = UserCreationForm.Meta.fields + (

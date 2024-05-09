@@ -6,7 +6,7 @@ from django.views import generic
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
-from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm
+from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm, WorkerChangeForm
 from app.models import Position, Worker, TaskType, Task
 
 
@@ -130,3 +130,8 @@ def unassign_task_from_worker_page(
 class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
     model = Worker
     form_class = WorkerCreationForm
+
+
+class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Worker
+    form_class = WorkerChangeForm

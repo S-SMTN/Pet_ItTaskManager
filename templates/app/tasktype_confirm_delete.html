@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Delete {{ object.name }} task type </title>{% endblock %}
+
+{% block content %}
+
+  {% if deletion_restricted %}
+    <h1>Deletion restricted! Task type already has tasks!</h1>
+  {% else %}
+    <h1>Delete {{ object.name }} task type?</h1>
+    <form action="" method="post">
+      {% csrf_token %}
+
+      <input type="submit" value="Yes" class="btn btn-danger">
+    </form>
+  {% endif %}
+  <a href="{% url 'app:task-type-list' %}" class="btn btn-primary">
+    Back
+  </a>
+{% endblock %}

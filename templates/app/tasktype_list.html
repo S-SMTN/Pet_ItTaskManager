@@ -5,7 +5,7 @@
 {% block content %}
   <h1>
     Task types List
-    <a href="" class="btn btn-primary link-to-page">
+    <a href="{% url 'app:task-type-create' %}" class="btn btn-primary link-to-page">
       Create
     </a>
   </h1>
@@ -15,7 +15,7 @@
     <input type="submit" value="🔎">
   </form>
 
-  {% if task_types_list %}
+  {% if tasktype_list %}
     <table class="table">
       <tr>
         <th>ID</th>
@@ -25,13 +25,13 @@
         <th>Delete</th>
       </tr>
 
-      {% for type in task_types_list %}
+      {% for type in tasktype_list %}
       <tr>
         <td>
             {{ type.id }}
         </td>
         <td>
-          <a href="{% url 'app:task-types-detail' pk=type.id %}">
+          <a href="{% url 'app:task-type-detail' pk=type.id %}">
             {{ type.name }}
           </a>
         </td>
@@ -39,13 +39,13 @@
             {{ type.task_set.all|length }}
         </td>
         <td>
-            <a href="">
+            <a href="{% url 'app:task-type-update' pk=type.id %}">
               Update
             </a>
           </td>
           <td>
             <a style="color: red"
-              href="">
+              href="{% url 'app:task-type-delete' pk=type.id %}">
               Delete
             </a>
           </td>

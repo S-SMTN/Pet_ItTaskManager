@@ -19,8 +19,7 @@
   <p>{{ task.description }}</p>
   <h2>
     Deadline: {{ task.deadline }}<br>
-    Status: {{ task.is_completed|yesno:"Completed,Active" }}
-    <a href="{% url 'app:task-detail-toggle' pk=task.id %}" class="btn btn-warning">{{ task.is_completed|yesno:"Set Active,Set Completed" }}</a><br>
+    Status: {{ task.is_completed|yesno:"Completed,Active" }}<br>
     Task type: <a href="{% url 'app:task-type-detail' pk=task.task_type.id %}">{{ task.task_type }}</a><br>
     Assignees:
   </h2>

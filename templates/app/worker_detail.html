@@ -29,7 +29,7 @@
       {% for task in page_obj %}
         <tr>
           <td>{{ task.id }}</td>
-          <td><a href="">{{ task.name }}</a></td>
+          <td><a href="{% url 'app:task-detail' pk=task.id %}">{{ task.name }}</a></td>
           <td>{{ task.deadline }}</td>
           <td>{{ task.is_completed|yesno:"Completed,Active" }}</td>
           <td>{{ task.get_priority_display }}</td>

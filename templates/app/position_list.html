@@ -16,40 +16,42 @@
   </form>
 
   {% if position_list %}
-      <table class="table">
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>QTY</th>
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
+    <table class="table">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>QTY</th>
+        <th>Update</th>
+        <th>Delete</th>
+      </tr>
 
-        {% for  position in position_list %}
-        <tr>
-          <td>
-              {{ position.id }}
+      {% for  position in position_list %}
+      <tr>
+        <td>
+            {{ position.id }}
+        </td>
+        <td>
+          <a href="{% url 'app:position-detail' pk=position.id %}">
+            {{ position.name }}
+          </a>
+        </td>
+        <td>
+            {{ position.workers.all|length }}
+        </td>
+        <td>
+            <a href="{% url 'app:position-update' pk=position.id %}">
+              Update
+            </a>
           </td>
           <td>
-              {{ position.name }}
+            <a style="color: red"
+              href="{% url 'app:position-delete' pk=position.id %}">
+              Delete
+            </a>
           </td>
-          <td>
-              {{ position.workers.all|length }}
-          </td>
-          <td>
-              <a href="{% url 'app:position-update' pk=position.id %}">
-                Update
-              </a>
-            </td>
-            <td>
-              <a style="color: red"
-                href="{% url 'app:position-delete' pk=position.id %}">
-                Delete
-              </a>
-            </td>
-        </tr>
-        {% endfor %}
-      </table>
+      </tr>
+      {% endfor %}
+    </table>
 
   {% else %}
     <p>There are no positions in this app</p>

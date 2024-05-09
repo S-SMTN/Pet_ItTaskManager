@@ -47,6 +47,11 @@ class PositionListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
+class PositionDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Position
+    queryset = Position.objects.all().prefetch_related("workers")
+
+
 class PositionCreateView(LoginRequiredMixin, generic.CreateView):
     model = Position
     fields = "__all__"

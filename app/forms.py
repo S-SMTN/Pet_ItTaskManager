@@ -1,4 +1,7 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
+from app.models import Worker
 
 
 class PositionSearchForm(forms.Form):
@@ -25,3 +28,13 @@ class WorkerSearchForm(forms.Form):
             }
         )
     )
+
+
+class WorkerCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Worker
+        fields = UserCreationForm.Meta.fields + (
+            "position",
+            "first_name",
+            "last_name",
+        )

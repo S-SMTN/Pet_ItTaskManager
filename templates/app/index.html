@@ -9,7 +9,7 @@
         <li><strong>Positions: </strong><a href="{% url 'app:position-list' %}">{{ num_positions }}</a></li>
         <li><strong>Workers: </strong><a href="{% url 'app:worker-list' %}">{{ num_workers }}</a></li>
         <li><strong>Task types: </strong><a href="{% url 'app:task-type-list' %}">{{ num_task_types }}</a></li>
-        <li><strong>Tasks: </strong>{{ num_tasks }}</li>
+        <li><strong>Tasks: </strong><a href="{% url 'app:task-list' %}">{{ num_tasks }}</a></li>
     </ul>
 
 {% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load filter_by_category %}
+
+{% block title %}<title>Tasks</title>{% endblock %}
+
+{% block content %}
+  <h1>
+    Tasks List
+    <a href="" class="btn btn-primary link-to-page">
+      Create
+    </a>
+  </h1>
+
+  <form action="" method="get">
+    {{ search_form }}
+    <input type="submit" value="🔎">
+  </form>
+
+  {% if task_list %}
+    <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Deadline</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Task type</th>
+          <th>Assignees</th>
+          <th>Update</th>
+          <th>Delete</th>
+        </tr>
+      {% for task in task_list %}
+        <tr>
+          <td>{{ task.id }}</td>
+          <td><a href="">{{ task.name }}</a></td>
+          <td>{{ task.deadline }}</td>
+          <td>{{ task.is_completed|yesno:"Completed,Active" }}</td>
+          <td>{{ task.get_priority_display }}</td>
+          <td>{{ task.task_type }}</td>
+          <td>{% for user in task.assignees.all %}<a href="{% url 'app:worker-detail' pk=user.id %}">{{user}}</a><br>{% endfor %} </td>
+          <td>
+            <a href="">
+              Update
+            </a>
+          </td>
+          <td>
+            <a style="color: red"
+              href="">
+              Delete
+            </a>
+          </td>
+          </td>
+        </tr>
+      {% endfor %}
+
+  {% else %}
+    <p>There are no tasks in this app</p>
+  {% endif %}
+
+{% endblock %}

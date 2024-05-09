@@ -6,7 +6,7 @@ from django.views import generic
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
-from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm, WorkerChangeForm
+from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm, WorkerChangeForm, TaskForm
 from app.models import Position, Worker, TaskType, Task
 
 
@@ -218,3 +218,33 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         if name:
             return queryset.filter(username__icontains=name)
         return queryset
+
+
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Task
+    queryset = Task.objects.all().prefetch_related("assignees", "task_type")
+
+
+class TaskCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Task
+    form_class = TaskForm
+    success_url = reverse_lazy("app:task-list")
+
+
+class TaskUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Task
+    form_class = TaskForm
+    success_url = reverse_lazy("app:task-list")
+
+
+class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Task
+    success_url = reverse_lazy("app:task-list")
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super(TaskDeleteView, self).get_context_data(**kwargs)
+        task = self.get_object()
+        if task.assignees.count() > 0:
+            deletion_restricted = True
+            context["deletion_restricted"] = deletion_restricted
+        return context

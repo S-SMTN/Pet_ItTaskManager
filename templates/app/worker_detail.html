@@ -9,37 +9,40 @@
       Delete worker
     </a>
 
-    <a href="" class="btn btn-secondary link-to-page">
+    <a href="{% url 'app:worker-update' pk=user.id %}" class="btn btn-secondary link-to-page">
       Edit worker data
     </a>
   </h1>
 
-  <h2></h2>
-  <table class="table">
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Deadline</th>
-        <th>Status</th>
-        <th>Priority</th>
-        <th>Task type</th>
-        <th>Assignees</th>
-        <th>Unassign</th>
-      </tr>
-    {% for task in page_obj %}
-      <tr>
-        <td>{{ task.id }}</td>
-        <td><a href="">{{ task.name }}</a></td>
-        <td>{{ task.deadline }}</td>
-        <td>{{ task.is_completed|yesno:"Completed,Active" }}</td>
-        <td>{{ task.get_priority_display }}</td>
-        <td>{{ task.task_type }}</td>
-        <td>{% for user in task.assignees.all %}<a href="{% url 'app:worker-detail' pk=user.id %}">{{user}}</a><br>{% endfor %} </td>
-        <td><a href="{% url 'app:worker-unassign-task' worker_id=worker.id task_id=task.id %}" class="btn btn-warning">Unassign</a></td>
-      </tr>
-    {% endfor %}
+  {% if page_obj %}
+    <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Deadline</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Task type</th>
+          <th>Assignees</th>
+          <th>Unassign</th>
+        </tr>
+      {% for task in page_obj %}
+        <tr>
+          <td>{{ task.id }}</td>
+          <td><a href="">{{ task.name }}</a></td>
+          <td>{{ task.deadline }}</td>
+          <td>{{ task.is_completed|yesno:"Completed,Active" }}</td>
+          <td>{{ task.get_priority_display }}</td>
+          <td>{{ task.task_type }}</td>
+          <td>{% for user in task.assignees.all %}<a href="{% url 'app:worker-detail' pk=user.id %}">{{user}}</a><br>{% endfor %} </td>
+          <td><a href="{% url 'app:worker-unassign-task' worker_id=worker.id task_id=task.id %}" class="btn btn-warning">Unassign</a></td>
+        </tr>
+      {% endfor %}
 
   </table>
+  {% else %}
+    <h2>There are no tasks assigned to this worker</h2>
+  {% endif %}
   <a href="{% url 'app:worker-list' %}" class="btn btn-primary">
     Back
   </a>

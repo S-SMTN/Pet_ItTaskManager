@@ -135,3 +135,16 @@ class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
 class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Worker
     form_class = WorkerChangeForm
+
+
+class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Worker
+    success_url = reverse_lazy("app:worker-list")
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super(WorkerDeleteView, self).get_context_data(**kwargs)
+        worker = self.get_object()
+        if worker.tasks.count() > 0:
+            deletion_restricted = True
+            context["deletion_restricted"] = deletion_restricted
+        return context

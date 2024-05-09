@@ -31,7 +31,7 @@
             {{ type.id }}
         </td>
         <td>
-          <a href="">
+          <a href="{% url 'app:task-types-detail' pk=type.id %}">
             {{ type.name }}
           </a>
         </td>

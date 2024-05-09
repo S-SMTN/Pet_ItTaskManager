@@ -150,14 +150,13 @@ class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
         return context
 
 
-class TaskTypesListView(LoginRequiredMixin, generic.ListView):
-    context_object_name = "task_types_list"
-    template_name = "app/task_types_list.html"
+class TaskTypeListView(LoginRequiredMixin, generic.ListView):
     model = TaskType
     paginate_by = 10
 
     def get_context_data(self, *, object_list=None, **kwargs) -> dict:
-        context = super(TaskTypesListView, self).get_context_data(**kwargs)
+        context = super(TaskTypeListView, self).get_context_data(**kwargs)
+        print(context)
         name = self.request.GET.get("name")
         context["search_form"] = PositionSearchForm(
             initial={"name": name}
@@ -172,6 +171,31 @@ class TaskTypesListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
-class TaskTypesDetailView(LoginRequiredMixin, generic.DetailView):
+class TaskTypeDetailView(LoginRequiredMixin, generic.DetailView):
     model = TaskType
     queryset = TaskType.objects.all().prefetch_related("task_set__assignees")
+
+
+class TaskTypeCreateView(LoginRequiredMixin, generic.CreateView):
+    model = TaskType
+    fields = "__all__"
+    success_url = reverse_lazy("app:task-type-list")
+
+
+class TaskTypeUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = TaskType
+    fields = "__all__"
+    success_url = reverse_lazy("app:task-type-list")
+
+
+class TaskTypeDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = TaskType
+    success_url = reverse_lazy("app:task-type-list")
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super(TaskTypeDeleteView, self).get_context_data(**kwargs)
+        task_type = self.get_object()
+        if task_type.task_set.count() > 0:
+            deletion_restricted = True
+            context["deletion_restricted"] = deletion_restricted
+        return context

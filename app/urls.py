@@ -2,7 +2,7 @@ from django.urls import path
 
 from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView, \
     WorkerListView, worker_detail_view, unassign_task_from_worker_page, PositionDetailView, WorkerCreateView, \
-    WorkerUpdateView, WorkerDeleteView, TaskTypesListView
+    WorkerUpdateView, WorkerDeleteView, TaskTypesListView, TaskTypesDetailView
 
 urlpatterns = [
     path("", index, name="index"),
@@ -61,6 +61,11 @@ urlpatterns = [
         "task_types/",
         TaskTypesListView.as_view(),
         name="task-types-list",
+    ),
+    path(
+        "task_types/<int:pk>/detail/",
+        TaskTypesDetailView.as_view(),
+        name="task-types-detail",
     ),
 ]
 

@@ -148,3 +148,25 @@ class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
             deletion_restricted = True
             context["deletion_restricted"] = deletion_restricted
         return context
+
+
+class TaskTypesListView(LoginRequiredMixin, generic.ListView):
+    context_object_name = "task_types_list"
+    template_name = "app/task_types_list.html"
+    model = TaskType
+    paginate_by = 10
+
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict:
+        context = super(TaskTypesListView, self).get_context_data(**kwargs)
+        name = self.request.GET.get("name")
+        context["search_form"] = PositionSearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self) -> QuerySet:
+        queryset = TaskType.objects.all().prefetch_related()
+        name = self.request.GET.get("name")
+        if name:
+            return queryset.filter(name__icontains=name)
+        return queryset

@@ -170,3 +170,8 @@ class TaskTypesListView(LoginRequiredMixin, generic.ListView):
         if name:
             return queryset.filter(name__icontains=name)
         return queryset
+
+
+class TaskTypesDetailView(LoginRequiredMixin, generic.DetailView):
+    model = TaskType
+    queryset = TaskType.objects.all().prefetch_related("task_set__assignees")

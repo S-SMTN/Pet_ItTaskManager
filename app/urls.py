@@ -12,6 +12,11 @@ urlpatterns = [
         name="position-create",
     ),
     path(
+        "positions/<int:pk>/detail/",
+        PositionDetailView.as_view(),
+        name="position-detail",
+    ),
+    path(
         "positions/<int:pk>/update/",
         PositionUpdateView.as_view(),
         name="position-update",

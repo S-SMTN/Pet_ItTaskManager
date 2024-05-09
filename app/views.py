@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.views import generic
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 
 from app.forms import PositionSearchForm, WorkerSearchForm
 from app.models import Position, Worker, TaskType, Task
@@ -95,3 +96,32 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         if username:
             return queryset.filter(username__icontains=username)
         return queryset
+
+
+def worker_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
+    worker = get_object_or_404(Worker, pk=pk)
+    tasks = Task.objects.filter(assignees=worker).prefetch_related("assignees", "task_type")
+    paginator = Paginator(tasks, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "worker": worker,
+        "tasks": tasks,
+        "paginator": paginator,
+        "page_obj": page_obj,
+        "is_paginated": True
+    }
+
+    return render(request, "app/worker_detail.html", context=context)
+
+
+def unassign_task_from_worker_page(
+    request: HttpRequest,
+    worker_id: int,
+    task_id: int
+) -> HttpResponse:
+    worker = Worker.objects.get(id=worker_id)
+    task = Task.objects.get(id=task_id)
+    worker.tasks.remove(task)
+    return HttpResponseRedirect(reverse_lazy("app:worker-detail", args=[worker_id]))

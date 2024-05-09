@@ -156,7 +156,6 @@ class TaskTypeListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs) -> dict:
         context = super(TaskTypeListView, self).get_context_data(**kwargs)
-        print(context)
         name = self.request.GET.get("name")
         context["search_form"] = PositionSearchForm(
             initial={"name": name}

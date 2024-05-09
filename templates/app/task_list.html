@@ -7,7 +7,7 @@
 {% block content %}
   <h1>
     Tasks List
-    <a href="{% url 'app:task-create' %}" class="btn btn-primary link-to-page">
+    <a href="" class="btn btn-primary link-to-page">
       Create
     </a>
   </h1>
@@ -24,7 +24,6 @@
           <th>Name</th>
           <th>Deadline</th>
           <th>Status</th>
-          <th>Set status</th>
           <th>Priority</th>
           <th>Task type</th>
           <th>Assignees</th>
@@ -34,21 +33,20 @@
       {% for task in task_list %}
         <tr>
           <td>{{ task.id }}</td>
-          <td><a href="{% url 'app:task-detail' pk=task.id %}">{{ task.name }}</a></td>
+          <td><a href="">{{ task.name }}</a></td>
           <td>{{ task.deadline }}</td>
           <td>{{ task.is_completed|yesno:"Completed,Active" }}</td>
-          <td><a href="{% url 'app:task-list-toggle' pk=task.id %}" class="btn btn-warning">{{ task.is_completed|yesno:"Set Active,Set Completed" }}</a></td>
           <td>{{ task.get_priority_display }}</td>
-          <td><a href="{% url 'app:task-type-detail' pk=task.task_type.id %}">{{ task.task_type }}</a></td>
+          <td>{{ task.task_type }}</td>
           <td>{% for user in task.assignees.all %}<a href="{% url 'app:worker-detail' pk=user.id %}">{{user}}</a><br>{% endfor %} </td>
           <td>
-            <a href="{% url 'app:task-update' pk=task.id %}">
+            <a href="">
               Update
             </a>
           </td>
           <td>
             <a style="color: red"
-              href="{% url 'app:task-delete' pk=task.id %}">
+              href="">
               Delete
             </a>
           </td>

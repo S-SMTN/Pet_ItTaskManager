@@ -3,7 +3,8 @@ from django.urls import path
 from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView, \
     WorkerListView, worker_detail_view, unassign_task_from_worker_page, PositionDetailView, WorkerCreateView, \
     WorkerUpdateView, WorkerDeleteView, TaskTypeListView, TaskTypeDetailView, TaskTypeCreateView, TaskTypeUpdateView, \
-    TaskTypeDeleteView, TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView
+    TaskTypeDeleteView, TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, \
+    task_list_toggle_status, task_toggle_status
 
 urlpatterns = [
     path("", index, name="index"),
@@ -107,6 +108,16 @@ urlpatterns = [
         "task/<int:pk>/delete/",
         TaskDeleteView.as_view(),
         name="task-delete",
+    ),
+    path(
+        "task-list/<int:pk>/toggle/",
+        task_list_toggle_status,
+        name="task-list-toggle",
+    ),
+    path(
+        "task/<int:pk>/toggle/",
+        task_toggle_status,
+        name="task-detail-toggle",
     ),
 ]
 

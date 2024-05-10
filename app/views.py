@@ -248,3 +248,25 @@ class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
             deletion_restricted = True
             context["deletion_restricted"] = deletion_restricted
         return context
+
+
+@login_required
+def task_list_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
+    task = Task.objects.get(id=pk)
+    if task.is_completed:
+        task.is_completed = False
+    else:
+        task.is_completed = True
+    task.save()
+    return HttpResponseRedirect(reverse_lazy("app:task-list"))
+
+
+@login_required
+def task_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
+    task = Task.objects.get(id=pk)
+    if task.is_completed:
+        task.is_completed = False
+    else:
+        task.is_completed = True
+    task.save()
+    return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}<title>{{ task.name }}  Task</title>{% endblock %}
+
+{% block content %}
+  <h1>
+    {{ task.name }} task
+    <a href="" class="btn btn-danger link-to-page">
+      Delete task
+    </a>
+
+    <a href="{% url 'app:task-update' pk=task.id %}" class="btn btn-secondary link-to-page">
+      Edit task
+    </a>
+  </h1>
+  <h2>
+    Description:
+  </h2>
+  <p>{{ task.description }}</p>
+  <h2>
+    Deadline: {{ task.deadline }}<br>
+    Status: {{ task.is_completed|yesno:"Completed,Active" }}
+    <a href="{% url 'app:task-detail-toggle' pk=task.id %}" class="btn btn-warning">{{ task.is_completed|yesno:"Set Active,Set Completed" }}</a><br>
+    Task type: <a href="{% url 'app:task-type-detail' pk=task.task_type.id %}">{{ task.task_type }}</a><br>
+    Assignees:
+  </h2>
+  <ul>
+    {% for user in task.assignees.all %}
+      <li><a href="{% url 'app:worker-detail' pk=user.id %}">{{ user }}</a></li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'app:task-list' %}" class="btn btn-primary">
+    Back
+  </a>
+{% endblock %}

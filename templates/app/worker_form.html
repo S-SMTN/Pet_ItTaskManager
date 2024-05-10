@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block title %}<title>{{ object|yesno:"Update,Create" }} worker</title>{% endblock %}
+
+{% block content %}
+  <h1>{{ object|yesno:"Update,Create" }} worker</h1>
+  <form action="" method="post" novalidate>
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <input type="submit" value="Submit" class="btn btn-primary">
+  </form>
+
+  {% if object %}
+    <a href="{% url 'app:worker-detail' pk=object.id %}" class="btn btn-primary">
+      Back
+    </a>
+  {% else %}
+    <a href="{% url 'app:worker-list' %}" class="btn btn-primary">
+      Back
+    </a>
+  {% endif %}
+{% endblock %}

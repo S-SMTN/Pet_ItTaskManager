@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}<title>{{ tasktype.name }}  details</title>{% endblock %}
+
+{% block content %}
+  <h1>
+    {{ tasktype.name }}
+  </h1>
+  <h2>
+    Tasks:
+  </h2>
+  <ul>
+    {% for task in tasktype.task_set.all %}
+      <li><a href="">{{ task }}</a></li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'app:task-type-list' %}" class="btn btn-primary">
+    Back
+  </a>
+{% endblock %}

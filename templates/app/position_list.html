@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Positions</title>{% endblock %}
+
+{% block content %}
+  <h1>
+    Position List
+    <a href="{% url 'app:position-create' %}" class="btn btn-primary link-to-page">
+      Create
+    </a>
+  </h1>
+
+  <form action="" method="get">
+    {{ search_form }}
+    <input type="submit" value="🔎">
+  </form>
+
+  {% if position_list %}
+    <table class="table">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>QTY</th>
+        <th>Update</th>
+        <th>Delete</th>
+      </tr>
+
+      {% for  position in position_list %}
+      <tr>
+        <td>
+            {{ position.id }}
+        </td>
+        <td>
+          <a href="{% url 'app:position-detail' pk=position.id %}">
+            {{ position.name }}
+          </a>
+        </td>
+        <td>
+            {{ position.workers.all|length }}
+        </td>
+        <td>
+            <a href="{% url 'app:position-update' pk=position.id %}">
+              Update
+            </a>
+          </td>
+          <td>
+            <a style="color: red"
+              href="{% url 'app:position-delete' pk=position.id %}">
+              Delete
+            </a>
+          </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+  {% else %}
+    <p>There are no positions in this app</p>
+  {% endif %}
+
+{% endblock %}

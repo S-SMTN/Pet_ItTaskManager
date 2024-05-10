@@ -1,0 +1,28 @@
+body {
+    margin-top: 20px;
+}
+
+.btn-link-1{
+  border:none;
+  outline:none;
+  background:none;
+  cursor:pointer;
+  color:#0000EE;
+  padding:0;
+  text-decoration:underline;
+  font-family:inherit;
+  font-size:inherit;
+}
+.btn-link-1:active{
+  color:#FF0000;
+}
+
+.link-to-page {
+    float: right;
+    margin: 0 2px 0 2px;
+}
+
+.sidebar-nav {
+    padding: 0;
+    list-style: none;
+}

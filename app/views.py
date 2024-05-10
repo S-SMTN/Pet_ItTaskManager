@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
@@ -98,6 +99,7 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
+@login_required
 def worker_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
     worker = get_object_or_404(Worker, pk=pk)
     tasks = Task.objects.filter(assignees=worker).prefetch_related("assignees", "task_type")
@@ -116,6 +118,7 @@ def worker_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, "app/worker_detail.html", context=context)
 
 
+@login_required
 def unassign_task_from_worker_page(
     request: HttpRequest,
     worker_id: int,

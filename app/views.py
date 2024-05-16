@@ -99,23 +99,26 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
-@login_required
-def worker_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
-    worker = get_object_or_404(Worker, pk=pk)
-    tasks = Task.objects.filter(assignees=worker).prefetch_related("assignees", "task_type")
-    paginator = Paginator(tasks, 10)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Worker
+    queryset = Worker.objects.all().prefetch_related("tasks").select_related("position")
 
-    context = {
-        "worker": worker,
-        "tasks": tasks,
-        "paginator": paginator,
-        "page_obj": page_obj,
-        "is_paginated": True
-    }
+    def get_context_data(self, **kwargs) -> dict:
+        context = super(WorkerDetailView, self).get_context_data(**kwargs)
 
-    return render(request, "app/worker_detail.html", context=context)
+        tasks = Task.objects.filter(
+            assignees=self.get_object()
+        ).prefetch_related("assignees", "task_type")
+        paginator = Paginator(tasks, 10)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context["tasks"] = tasks
+        context["paginator"] = paginator
+        context["page_obj"] = page_obj
+        context["is_paginated"] = True
+
+        return context
 
 
 @login_required
@@ -267,9 +270,9 @@ def task_list_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
 @login_required
 def task_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
     task = Task.objects.get(id=pk)
-    if task.is_completed:
-        task.is_completed = False
-    else:
+    if not task.is_completed:
         task.is_completed = True
+    else:
+        task.is_completed = False
     task.save()
     return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))

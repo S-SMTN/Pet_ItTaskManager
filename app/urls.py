@@ -1,10 +1,10 @@
 from django.urls import path
 
 from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView, \
-    WorkerListView, worker_detail_view, unassign_task_from_worker_page, PositionDetailView, WorkerCreateView, \
+    WorkerListView, unassign_task_from_worker_page, PositionDetailView, WorkerCreateView, \
     WorkerUpdateView, WorkerDeleteView, TaskTypeListView, TaskTypeDetailView, TaskTypeCreateView, TaskTypeUpdateView, \
     TaskTypeDeleteView, TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, \
-    task_list_toggle_status, task_toggle_status
+    task_list_toggle_status, task_toggle_status, WorkerDetailView
 
 urlpatterns = [
     path("", index, name="index"),
@@ -36,7 +36,7 @@ urlpatterns = [
     ),
     path(
         "workers/<int:pk>/",
-        worker_detail_view,
+        WorkerDetailView.as_view(),
         name="worker-detail",
     ),
     path(

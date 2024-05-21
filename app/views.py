@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
@@ -17,21 +16,21 @@ from app.forms import (
 from app.models import Position, Worker, TaskType, Task
 
 
-def index(request: HttpRequest) -> HttpResponse:
+class IndexView(generic.View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        num_positions = Position.objects.count()
+        num_workers = Worker.objects.count()
+        num_task_types = TaskType.objects.count()
+        num_tasks = Task.objects.count()
 
-    num_positions = Position.objects.count()
-    num_workers = Worker.objects.count()
-    num_task_types = TaskType.objects.count()
-    num_tasks = Task.objects.count()
+        context = {
+            "num_positions": num_positions,
+            "num_workers": num_workers,
+            "num_task_types": num_task_types,
+            "num_tasks": num_tasks
+        }
 
-    context = {
-        "num_positions": num_positions,
-        "num_workers": num_workers,
-        "num_task_types": num_task_types,
-        "num_tasks": num_tasks
-    }
-
-    return render(request, "app/index.html", context=context)
+        return render(request, "app/index.html", context=context)
 
 
 class PositionListView(LoginRequiredMixin, generic.ListView):

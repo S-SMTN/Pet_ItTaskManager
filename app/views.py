@@ -5,9 +5,15 @@ from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
-from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm, WorkerChangeForm, TaskForm
+from app.forms import (
+    PositionSearchForm,
+    WorkerSearchForm,
+    WorkerCreationForm,
+    WorkerChangeForm,
+    TaskForm
+)
 from app.models import Position, Worker, TaskType, Task
 
 
@@ -270,9 +276,6 @@ def task_list_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
 @login_required
 def task_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
     task = Task.objects.get(id=pk)
-    if not task.is_completed:
-        task.is_completed = True
-    else:
-        task.is_completed = False
+    task.is_completed = not task.is_completed
     task.save()
     return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))

@@ -127,16 +127,17 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
-@login_required
-def unassign_task_from_worker_page(
-    request: HttpRequest,
-    worker_id: int,
-    task_id: int
-) -> HttpResponse:
-    worker = Worker.objects.get(id=worker_id)
-    task = Task.objects.get(id=task_id)
-    worker.tasks.remove(task)
-    return HttpResponseRedirect(reverse_lazy("app:worker-detail", args=[worker_id]))
+class UnassignTaskFromWorkerPage(LoginRequiredMixin, generic.View):
+    def get(
+        self,
+        *_,
+        worker_id: int,
+        task_id: int
+    ) -> HttpResponse:
+        worker = Worker.objects.get(id=worker_id)
+        task = Task.objects.get(id=task_id)
+        worker.tasks.remove(task)
+        return HttpResponseRedirect(reverse_lazy("app:worker-detail", args=[worker_id]))
 
 
 class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
@@ -262,20 +263,17 @@ class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
         return context
 
 
-@login_required
-def task_list_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
-    task = Task.objects.get(id=pk)
-    if task.is_completed:
-        task.is_completed = False
-    else:
-        task.is_completed = True
-    task.save()
-    return HttpResponseRedirect(reverse_lazy("app:task-list"))
+class TaskListToggleStatus(LoginRequiredMixin, generic.View):
+    def get(self, *_, pk: int) -> HttpResponse:
+        task = Task.objects.get(id=pk)
+        task.is_completed = not task.is_completed
+        task.save()
+        return HttpResponseRedirect(reverse_lazy("app:task-list"))
 
 
-@login_required
-def task_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
-    task = Task.objects.get(id=pk)
-    task.is_completed = not task.is_completed
-    task.save()
-    return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))
+class TaskToggleStatus(LoginRequiredMixin, generic.View):
+    def get(self, *_, pk: int) -> HttpResponse:
+        task = Task.objects.get(id=pk)
+        task.is_completed = not task.is_completed
+        task.save()
+        return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))

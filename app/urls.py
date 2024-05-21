@@ -7,7 +7,7 @@ from app.views import (
     PositionUpdateView,
     PositionDeleteView,
     WorkerListView,
-    unassign_task_from_worker_page,
+    UnassignTaskFromWorkerPage,
     PositionDetailView,
     WorkerCreateView,
     WorkerUpdateView,
@@ -22,9 +22,9 @@ from app.views import (
     TaskCreateView,
     TaskUpdateView,
     TaskDeleteView,
-    task_list_toggle_status,
-    task_toggle_status,
-    WorkerDetailView
+    TaskListToggleStatus,
+    WorkerDetailView,
+    TaskToggleStatus
 )
 
 urlpatterns = [
@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     path(
         "workers/<int:worker_id>/unassign/<int:task_id>/",
-        unassign_task_from_worker_page,
+        UnassignTaskFromWorkerPage.as_view(),
         name="worker-unassign-task",
     ),
     path(
@@ -132,12 +132,12 @@ urlpatterns = [
     ),
     path(
         "task-list/<int:pk>/toggle/",
-        task_list_toggle_status,
+        TaskListToggleStatus.as_view(),
         name="task-list-toggle",
     ),
     path(
         "task/<int:pk>/toggle/",
-        task_toggle_status,
+        TaskToggleStatus.as_view(),
         name="task-detail-toggle",
     ),
 ]

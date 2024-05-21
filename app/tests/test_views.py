@@ -29,6 +29,8 @@ LOGIN_REQUIRED_PARAMETRIZED_PATHS = [
     "task-detail",
     "task-update",
     "task-delete",
+    "task-detail-toggle",
+    "task-list-toggle"
 ]
 
 

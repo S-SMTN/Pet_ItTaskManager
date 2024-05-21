@@ -1,14 +1,35 @@
 from django.urls import path
 
-from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView, \
-    WorkerListView, unassign_task_from_worker_page, PositionDetailView, WorkerCreateView, \
-    WorkerUpdateView, WorkerDeleteView, TaskTypeListView, TaskTypeDetailView, TaskTypeCreateView, TaskTypeUpdateView, \
-    TaskTypeDeleteView, TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, \
-    task_list_toggle_status, task_toggle_status, WorkerDetailView
+from app.views import (
+    index,
+    PositionListView,
+    PositionCreateView,
+    PositionUpdateView,
+    PositionDeleteView,
+    WorkerListView,
+    unassign_task_from_worker_page,
+    PositionDetailView,
+    WorkerCreateView,
+    WorkerUpdateView,
+    WorkerDeleteView,
+    TaskTypeListView,
+    TaskTypeDetailView,
+    TaskTypeCreateView,
+    TaskTypeUpdateView,
+    TaskTypeDeleteView,
+    TaskListView,
+    TaskDetailView,
+    TaskCreateView,
+    TaskUpdateView,
+    TaskDeleteView,
+    task_list_toggle_status,
+    task_toggle_status,
+    WorkerDetailView
+)
 
 urlpatterns = [
     path("", index, name="index"),
-    path("positions", PositionListView.as_view(), name="position-list"),
+    path("positions/", PositionListView.as_view(), name="position-list"),
     path(
         "positions/create/",
         PositionCreateView.as_view(),
@@ -40,22 +61,22 @@ urlpatterns = [
         name="worker-detail",
     ),
     path(
-        "workers/<int:worker_id>/unassign/<int:task_id>",
+        "workers/<int:worker_id>/unassign/<int:task_id>/",
         unassign_task_from_worker_page,
         name="worker-unassign-task",
     ),
     path(
-        "workers/create",
+        "workers/create/",
         WorkerCreateView.as_view(),
         name="worker-create",
     ),
     path(
-        "workers/<int:pk>/update",
+        "workers/<int:pk>/update/",
         WorkerUpdateView.as_view(),
         name="worker-update",
     ),
     path(
-        "workers/<int:pk>/delete",
+        "workers/<int:pk>/delete/",
         WorkerDeleteView.as_view(),
         name="worker-delete",
     ),

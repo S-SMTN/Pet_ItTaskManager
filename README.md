@@ -1,5 +1,16 @@
 # Pet_ItTaskManager
 
+## How to run
+
+```
+git clone https://github.com/S-SMTN/Pet_ItTaskManager.git
+cd Pet_ItTaskManager
+python3 -m venv venv
+source venv/scripts/activate
+pip install -r requirements.txt
+python manage.py runserver
+```
+
 Current project is IT Company Task Manager analog.
 
 It has 4 models:

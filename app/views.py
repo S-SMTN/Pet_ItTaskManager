@@ -1,31 +1,36 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
-from app.forms import PositionSearchForm, WorkerSearchForm, WorkerCreationForm, WorkerChangeForm, TaskForm
+from app.forms import (
+    PositionSearchForm,
+    WorkerSearchForm,
+    WorkerCreationForm,
+    WorkerChangeForm,
+    TaskForm
+)
 from app.models import Position, Worker, TaskType, Task
 
 
-def index(request: HttpRequest) -> HttpResponse:
+class IndexView(generic.View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        num_positions = Position.objects.count()
+        num_workers = Worker.objects.count()
+        num_task_types = TaskType.objects.count()
+        num_tasks = Task.objects.count()
 
-    num_positions = Position.objects.count()
-    num_workers = Worker.objects.count()
-    num_task_types = TaskType.objects.count()
-    num_tasks = Task.objects.count()
+        context = {
+            "num_positions": num_positions,
+            "num_workers": num_workers,
+            "num_task_types": num_task_types,
+            "num_tasks": num_tasks
+        }
 
-    context = {
-        "num_positions": num_positions,
-        "num_workers": num_workers,
-        "num_task_types": num_task_types,
-        "num_tasks": num_tasks
-    }
-
-    return render(request, "app/index.html", context=context)
+        return render(request, "app/index.html", context=context)
 
 
 class PositionListView(LoginRequiredMixin, generic.ListView):
@@ -99,35 +104,39 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
-@login_required
-def worker_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
-    worker = get_object_or_404(Worker, pk=pk)
-    tasks = Task.objects.filter(assignees=worker).prefetch_related("assignees", "task_type")
-    paginator = Paginator(tasks, 10)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Worker
+    queryset = Worker.objects.all().prefetch_related("tasks").select_related("position")
 
-    context = {
-        "worker": worker,
-        "tasks": tasks,
-        "paginator": paginator,
-        "page_obj": page_obj,
-        "is_paginated": True
-    }
+    def get_context_data(self, **kwargs) -> dict:
+        context = super(WorkerDetailView, self).get_context_data(**kwargs)
 
-    return render(request, "app/worker_detail.html", context=context)
+        tasks = Task.objects.filter(
+            assignees=self.get_object()
+        ).prefetch_related("assignees", "task_type")
+        paginator = Paginator(tasks, 10)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context["tasks"] = tasks
+        context["paginator"] = paginator
+        context["page_obj"] = page_obj
+        context["is_paginated"] = True
+
+        return context
 
 
-@login_required
-def unassign_task_from_worker_page(
-    request: HttpRequest,
-    worker_id: int,
-    task_id: int
-) -> HttpResponse:
-    worker = Worker.objects.get(id=worker_id)
-    task = Task.objects.get(id=task_id)
-    worker.tasks.remove(task)
-    return HttpResponseRedirect(reverse_lazy("app:worker-detail", args=[worker_id]))
+class UnassignTaskFromWorkerPage(LoginRequiredMixin, generic.View):
+    def get(
+        self,
+        *_,
+        worker_id: int,
+        task_id: int
+    ) -> HttpResponse:
+        worker = Worker.objects.get(id=worker_id)
+        task = Task.objects.get(id=task_id)
+        worker.tasks.remove(task)
+        return HttpResponseRedirect(reverse_lazy("app:worker-detail", args=[worker_id]))
 
 
 class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
@@ -253,23 +262,17 @@ class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
         return context
 
 
-@login_required
-def task_list_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
-    task = Task.objects.get(id=pk)
-    if task.is_completed:
-        task.is_completed = False
-    else:
-        task.is_completed = True
-    task.save()
-    return HttpResponseRedirect(reverse_lazy("app:task-list"))
+class TaskListToggleStatus(LoginRequiredMixin, generic.View):
+    def get(self, *_, pk: int) -> HttpResponse:
+        task = Task.objects.get(id=pk)
+        task.is_completed = not task.is_completed
+        task.save()
+        return HttpResponseRedirect(reverse_lazy("app:task-list"))
 
 
-@login_required
-def task_toggle_status(request: HttpRequest, pk: int) -> HttpResponse:
-    task = Task.objects.get(id=pk)
-    if task.is_completed:
-        task.is_completed = False
-    else:
-        task.is_completed = True
-    task.save()
-    return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))
+class TaskToggleStatus(LoginRequiredMixin, generic.View):
+    def get(self, *_, pk: int) -> HttpResponse:
+        task = Task.objects.get(id=pk)
+        task.is_completed = not task.is_completed
+        task.save()
+        return HttpResponseRedirect(reverse_lazy("app:task-detail", args=[pk]))

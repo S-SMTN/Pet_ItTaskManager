@@ -1,14 +1,35 @@
 from django.urls import path
 
-from app.views import index, PositionListView, PositionCreateView, PositionUpdateView, PositionDeleteView, \
-    WorkerListView, worker_detail_view, unassign_task_from_worker_page, PositionDetailView, WorkerCreateView, \
-    WorkerUpdateView, WorkerDeleteView, TaskTypeListView, TaskTypeDetailView, TaskTypeCreateView, TaskTypeUpdateView, \
-    TaskTypeDeleteView, TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, \
-    task_list_toggle_status, task_toggle_status
+from app.views import (
+    PositionListView,
+    PositionCreateView,
+    PositionUpdateView,
+    PositionDeleteView,
+    WorkerListView,
+    UnassignTaskFromWorkerPage,
+    PositionDetailView,
+    WorkerCreateView,
+    WorkerUpdateView,
+    WorkerDeleteView,
+    TaskTypeListView,
+    TaskTypeDetailView,
+    TaskTypeCreateView,
+    TaskTypeUpdateView,
+    TaskTypeDeleteView,
+    TaskListView,
+    TaskDetailView,
+    TaskCreateView,
+    TaskUpdateView,
+    TaskDeleteView,
+    TaskListToggleStatus,
+    WorkerDetailView,
+    TaskToggleStatus,
+    IndexView
+)
 
 urlpatterns = [
-    path("", index, name="index"),
-    path("positions", PositionListView.as_view(), name="position-list"),
+    path("", IndexView.as_view(), name="index"),
+    path("positions/", PositionListView.as_view(), name="position-list"),
     path(
         "positions/create/",
         PositionCreateView.as_view(),
@@ -36,26 +57,26 @@ urlpatterns = [
     ),
     path(
         "workers/<int:pk>/",
-        worker_detail_view,
+        WorkerDetailView.as_view(),
         name="worker-detail",
     ),
     path(
-        "workers/<int:worker_id>/unassign/<int:task_id>",
-        unassign_task_from_worker_page,
+        "workers/<int:worker_id>/unassign/<int:task_id>/",
+        UnassignTaskFromWorkerPage.as_view(),
         name="worker-unassign-task",
     ),
     path(
-        "workers/create",
+        "workers/create/",
         WorkerCreateView.as_view(),
         name="worker-create",
     ),
     path(
-        "workers/<int:pk>/update",
+        "workers/<int:pk>/update/",
         WorkerUpdateView.as_view(),
         name="worker-update",
     ),
     path(
-        "workers/<int:pk>/delete",
+        "workers/<int:pk>/delete/",
         WorkerDeleteView.as_view(),
         name="worker-delete",
     ),
@@ -111,12 +132,12 @@ urlpatterns = [
     ),
     path(
         "task-list/<int:pk>/toggle/",
-        task_list_toggle_status,
+        TaskListToggleStatus.as_view(),
         name="task-list-toggle",
     ),
     path(
         "task/<int:pk>/toggle/",
-        task_toggle_status,
+        TaskToggleStatus.as_view(),
         name="task-detail-toggle",
     ),
 ]

@@ -83,7 +83,7 @@ class UserLoginForm(AuthenticationForm):
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                "value": "LoginTest123#"
+                "value": "LoginTest123"
             }
         )
     )

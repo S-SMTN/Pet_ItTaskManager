@@ -96,7 +96,7 @@ DATABASES = {
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES["default"].update(db_from_env)
 
-DATABASE_URL = "postgresql://app_base_owner:LDnfaJt30ESb@ep-rapid-wave-a2lz5jka.eu-central-1.aws.neon.tech/app_base?sslmode=require"
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
 # Password validation

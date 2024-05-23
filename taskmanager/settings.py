@@ -112,6 +112,8 @@ AUTH_USER_MODEL = "app.Worker"
 
 LOGIN_REDIRECT_URL = "/"
 
+LOGIN_URL = "/login/"
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

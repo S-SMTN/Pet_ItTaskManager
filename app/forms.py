@@ -1,5 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    UserChangeForm,
+    AuthenticationForm,
+    UsernameField
+)
 
 from app.models import Worker, Task
 
@@ -65,3 +70,23 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'deadline': forms.DateInput(attrs={'type':'date'}),
         }
+
+
+class UserLoginForm(AuthenticationForm):
+    username = UsernameField(
+        widget=forms.TextInput(
+            attrs={
+                "value": "testuser"
+            }
+        )
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "value": "LoginTest123#"
+            }
+        )
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
+        super(UserLoginForm, self).__init__(*args, **kwargs)
